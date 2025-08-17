@@ -516,28 +516,28 @@
                             <div style="background: #e8f4fd; padding: 15px; border-radius: 6px; margin-bottom: 15px;">
                                 <label style="display: block; font-weight: bold; margin-bottom: 15px;">🎨 Paint Brush Mode - Select Party First:</label>
                                 <div style="display: flex; flex-direction: column; gap: 12px;" id="partySelectionGroup">
-                                    <label class="winner-radio-label" onclick="selectParty('BNP')">
-                                        <input type="radio" name="winnerParty" value="BNP">
+                                    <label class="winner-radio-label" style="cursor: pointer !important;">
+                                        <input type="radio" name="winnerParty" value="BNP" onclick="selectPartyWinner('BNP')" style="cursor: pointer;">
                                         <span style="background-color: #007bff; width: 20px; height: 20px; border-radius: 4px; margin-right: 10px; display: inline-block;"></span>
                                         <strong>BNP (Bangladesh Nationalist Party)</strong>
                                     </label>
-                                    <label class="winner-radio-label" onclick="selectParty('Jamaat')">
-                                        <input type="radio" name="winnerParty" value="Jamaat">
+                                    <label class="winner-radio-label" style="cursor: pointer !important;">
+                                        <input type="radio" name="winnerParty" value="Jamaat" onclick="selectPartyWinner('Jamaat')" style="cursor: pointer;">
                                         <span style="background-color: #28a745; width: 20px; height: 20px; border-radius: 4px; margin-right: 10px; display: inline-block;"></span>
                                         <strong>Jamaat-e-Islami</strong>
                                     </label>
-                                    <label class="winner-radio-label" onclick="selectParty('NCP')">
-                                        <input type="radio" name="winnerParty" value="NCP">
+                                    <label class="winner-radio-label" style="cursor: pointer !important;">
+                                        <input type="radio" name="winnerParty" value="NCP" onclick="selectPartyWinner('NCP')" style="cursor: pointer;">
                                         <span style="background-color: #dc3545; width: 20px; height: 20px; border-radius: 4px; margin-right: 10px; display: inline-block;"></span>
                                         <strong>NCP (Nation Citizen Party)</strong>
                                     </label>
-                                    <label class="winner-radio-label" onclick="selectParty('Islamic')">
-                                        <input type="radio" name="winnerParty" value="Islamic">
+                                    <label class="winner-radio-label" style="cursor: pointer !important;">
+                                        <input type="radio" name="winnerParty" value="Islamic" onclick="selectPartyWinner('Islamic')" style="cursor: pointer;">
                                         <span style="background-color: #ffc107; width: 20px; height: 20px; border-radius: 4px; margin-right: 10px; display: inline-block;"></span>
                                         <strong>Islamic Party</strong>
                                     </label>
-                                    <label class="winner-radio-label" onclick="selectParty('Jatio')">
-                                        <input type="radio" name="winnerParty" value="Jatio">
+                                    <label class="winner-radio-label" style="cursor: pointer !important;">
+                                        <input type="radio" name="winnerParty" value="Jatio Party" onclick="selectPartyWinner('Jatio Party')" style="cursor: pointer;">
                                         <span style="background-color: #6f42c1; width: 20px; height: 20px; border-radius: 4px; margin-right: 10px; display: inline-block;"></span>
                                         <strong>Jatio Party</strong>
                                     </label>
@@ -692,7 +692,7 @@
                                 <td id="totalPercentIslamic">0%</td>
                             </tr>
                             <tr>
-                                <td><div class="party-color" style="background-color: #6f42c1; display: inline-block; width: 15px; height: 15px; margin-right: 5px;"></div>Jatio</td>
+                                <td><div class="party-color" style="background-color: #6f42c1; display: inline-block; width: 15px; height: 15px; margin-right: 5px;"></div>Jatio Party</td>
                                 <td id="totalSeatsJatio">0</td>
                                 <td id="totalVotesJatio">0</td>
                                 <td id="totalPercentJatio">0%</td>
@@ -743,7 +743,7 @@
             'Jamaat': '#28a745',
             'NCP': '#dc3545',
             'Islamic': '#ffc107',
-            'Jatio': '#6f42c1'
+            'Jatio Party': '#6f42c1'
         };
 
         // Generate random total voters between 400,000 and 500,000
@@ -958,7 +958,7 @@
                 'Jamaat': data.jamaatVotes || 0,
                 'NCP': data.ncpVotes || 0,
                 'Islamic': data.islamicVotes || 0,
-                'Jatio': data.jatioVotes || 0
+                'Jatio Party': data.jatioVotes || 0
             };
             
             return Object.keys(votes).reduce((a, b) => votes[a] > votes[b] ? a : b);
@@ -1040,7 +1040,7 @@
             data.jamaatVotes = selectedParty === 'Jamaat' ? Math.round(totalVoters * 0.4) : Math.round(totalVoters * 0.15);
             data.ncpVotes = selectedParty === 'NCP' ? Math.round(totalVoters * 0.4) : Math.round(totalVoters * 0.15);
             data.islamicVotes = selectedParty === 'Islamic' ? Math.round(totalVoters * 0.4) : Math.round(totalVoters * 0.15);
-            data.jatioVotes = selectedParty === 'Jatio' ? Math.round(totalVoters * 0.4) : Math.round(totalVoters * 0.15);
+            data.jatioVotes = selectedParty === 'Jatio Party' ? Math.round(totalVoters * 0.4) : Math.round(totalVoters * 0.15);
             
             // Update map colors
             if (polygonLayers[constituencyId]) {
@@ -1094,8 +1094,10 @@
             }
         }
 
-        // New function to handle party selection with proper event handling
-        function selectParty(partyValue) {
+        // New function specifically for winner mode party selection
+        function selectPartyWinner(partyValue) {
+            console.log('Selecting party:', partyValue);
+            
             // Clear all radio buttons first
             const radioButtons = document.querySelectorAll('input[name="winnerParty"]');
             radioButtons.forEach(radio => {
@@ -1106,8 +1108,16 @@
             const selectedRadio = document.querySelector(`input[name="winnerParty"][value="${partyValue}"]`);
             if (selectedRadio) {
                 selectedRadio.checked = true;
-                showBriefNotification(`${partyValue} selected. Now click constituencies to assign this party.`);
+                console.log('Party selected successfully:', partyValue);
+                showBriefNotification(`${partyValue} selected! Now click constituencies on the map to assign this party as winner.`);
+            } else {
+                console.error('Could not find radio button for party:', partyValue);
             }
+        }
+
+        // Keep the old function for backward compatibility
+        function selectParty(partyValue) {
+            selectPartyWinner(partyValue);
         }
 
         function clearWinnerSelection() {
@@ -1481,8 +1491,8 @@
 
         // Update national summary
         function updateNationalSummary() {
-            let totalSeats = { 'BNP': 0, 'Jamaat': 0, 'NCP': 0, 'Islamic': 0, 'Jatio': 0 };
-            let totalVotes = { 'BNP': 0, 'Jamaat': 0, 'NCP': 0, 'Islamic': 0, 'Jatio': 0 };
+            let totalSeats = { 'BNP': 0, 'Jamaat': 0, 'NCP': 0, 'Islamic': 0, 'Jatio Party': 0 };
+            let totalVotes = { 'BNP': 0, 'Jamaat': 0, 'NCP': 0, 'Islamic': 0, 'Jatio Party': 0 };
             let hasWinnerOnlyData = false;
             
             Object.keys(constituencyData).forEach(constituencyId => {
@@ -1504,7 +1514,7 @@
                         totalVotes.Jamaat += data.jamaatVotes || 0;
                         totalVotes.NCP += data.ncpVotes || 0;
                         totalVotes.Islamic += data.islamicVotes || 0;
-                        totalVotes.Jatio += data.jatioVotes || 0;
+                        totalVotes['Jatio Party'] += data.jatioVotes || 0;
                     }
                 }
             });
@@ -1557,7 +1567,7 @@
             document.getElementById('totalSeatsJamaat').textContent = totalSeats.Jamaat;
             document.getElementById('totalSeatsNCP').textContent = totalSeats.NCP;
             document.getElementById('totalSeatsIslamic').textContent = totalSeats.Islamic;
-            document.getElementById('totalSeatsJatio').textContent = totalSeats.Jatio;
+            document.getElementById('totalSeatsJatio').textContent = totalSeats['Jatio Party'];
             document.getElementById('grandTotalSeats').innerHTML = `<strong>${grandTotalSeats}</strong>`;
             
             if (!hasWinnerOnlyData) {
@@ -1566,7 +1576,7 @@
                 document.getElementById('totalVotesJamaat').textContent = totalVotes.Jamaat.toLocaleString();
                 document.getElementById('totalVotesNCP').textContent = totalVotes.NCP.toLocaleString();
                 document.getElementById('totalVotesIslamic').textContent = totalVotes.Islamic.toLocaleString();
-                document.getElementById('totalVotesJatio').textContent = totalVotes.Jatio.toLocaleString();
+                document.getElementById('totalVotesJatio').textContent = totalVotes['Jatio Party'].toLocaleString();
                 document.getElementById('grandTotalVotes').innerHTML = `<strong>${grandTotalVotes.toLocaleString()}</strong>`;
                 
                 // Update percentages
@@ -1574,7 +1584,7 @@
                 const jamaatPercent = grandTotalVotes > 0 ? ((totalVotes.Jamaat / grandTotalVotes) * 100).toFixed(1) : 0;
                 const ncpPercent = grandTotalVotes > 0 ? ((totalVotes.NCP / grandTotalVotes) * 100).toFixed(1) : 0;
                 const islamicPercent = grandTotalVotes > 0 ? ((totalVotes.Islamic / grandTotalVotes) * 100).toFixed(1) : 0;
-                const jatioPercent = grandTotalVotes > 0 ? ((totalVotes.Jatio / grandTotalVotes) * 100).toFixed(1) : 0;
+                const jatioPercent = grandTotalVotes > 0 ? ((totalVotes['Jatio Party'] / grandTotalVotes) * 100).toFixed(1) : 0;
                 
                 document.getElementById('totalPercentBNP').textContent = `${bnpPercent}%`;
                 document.getElementById('totalPercentJamaat').textContent = `${jamaatPercent}%`;
@@ -1781,7 +1791,7 @@
 
         function drawSummaryOnCanvas(ctx, centerX, startY) {
             // Calculate current totals
-            let totalSeats = { 'BNP': 0, 'Jamaat': 0, 'NCP': 0, 'Islamic': 0, 'Jatio': 0 };
+            let totalSeats = { 'BNP': 0, 'Jamaat': 0, 'NCP': 0, 'Islamic': 0, 'Jatio Party': 0 };
             Object.keys(constituencyData).forEach(constituencyId => {
                 const data = constituencyData[constituencyId];
                 if (data && data.completed) {
@@ -1795,7 +1805,7 @@
                 { name: 'Jamaat', color: '#28a745', seats: totalSeats.Jamaat },
                 { name: 'NCP', color: '#dc3545', seats: totalSeats.NCP },
                 { name: 'Islamic', color: '#ffc107', seats: totalSeats.Islamic },
-                { name: 'Jatio', color: '#6f42c1', seats: totalSeats.Jatio }
+                { name: 'Jatio Party', color: '#6f42c1', seats: totalSeats['Jatio Party'] }
             ];
             
             const grandTotal = Object.values(totalSeats).reduce((a, b) => a + b, 0);
@@ -1897,7 +1907,7 @@
                 document.getElementById('noSelection').style.display = 'block';
                 
                 // Reset all inputs
-                ['bnpInput', 'jamaatInput', 'ncpInput', 'islamicInput'].forEach(id => {
+                ['bnpInput', 'jamaatInput', 'ncpInput', 'islamicInput', 'jatioInput'].forEach(id => {
                     document.getElementById(id).value = '';
                 });
                 
