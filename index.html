@@ -516,25 +516,30 @@
                             <div style="background: #e8f4fd; padding: 15px; border-radius: 6px; margin-bottom: 15px;">
                                 <label style="display: block; font-weight: bold; margin-bottom: 15px;">🎨 Paint Brush Mode - Select Party First:</label>
                                 <div style="display: flex; flex-direction: column; gap: 12px;" id="partySelectionGroup">
-                                    <label class="winner-radio-label">
-                                        <input type="radio" name="winnerParty" value="BNP" onchange="updateSelectedParty()">
+                                    <label class="winner-radio-label" onclick="selectParty('BNP')">
+                                        <input type="radio" name="winnerParty" value="BNP">
                                         <span style="background-color: #007bff; width: 20px; height: 20px; border-radius: 4px; margin-right: 10px; display: inline-block;"></span>
                                         <strong>BNP (Bangladesh Nationalist Party)</strong>
                                     </label>
-                                    <label class="winner-radio-label">
-                                        <input type="radio" name="winnerParty" value="Jamaat" onchange="updateSelectedParty()">
+                                    <label class="winner-radio-label" onclick="selectParty('Jamaat')">
+                                        <input type="radio" name="winnerParty" value="Jamaat">
                                         <span style="background-color: #28a745; width: 20px; height: 20px; border-radius: 4px; margin-right: 10px; display: inline-block;"></span>
                                         <strong>Jamaat-e-Islami</strong>
                                     </label>
-                                    <label class="winner-radio-label">
-                                        <input type="radio" name="winnerParty" value="NCP" onchange="updateSelectedParty()">
+                                    <label class="winner-radio-label" onclick="selectParty('NCP')">
+                                        <input type="radio" name="winnerParty" value="NCP">
                                         <span style="background-color: #dc3545; width: 20px; height: 20px; border-radius: 4px; margin-right: 10px; display: inline-block;"></span>
                                         <strong>NCP (Nation Citizen Party)</strong>
                                     </label>
-                                    <label class="winner-radio-label">
-                                        <input type="radio" name="winnerParty" value="Islamic" onchange="updateSelectedParty()">
+                                    <label class="winner-radio-label" onclick="selectParty('Islamic')">
+                                        <input type="radio" name="winnerParty" value="Islamic">
                                         <span style="background-color: #ffc107; width: 20px; height: 20px; border-radius: 4px; margin-right: 10px; display: inline-block;"></span>
                                         <strong>Islamic Party</strong>
+                                    </label>
+                                    <label class="winner-radio-label" onclick="selectParty('Jatio')">
+                                        <input type="radio" name="winnerParty" value="Jatio">
+                                        <span style="background-color: #6f42c1; width: 20px; height: 20px; border-radius: 4px; margin-right: 10px; display: inline-block;"></span>
+                                        <strong>Jatio Party</strong>
                                     </label>
                                 </div>
                                 <div style="margin-top: 15px; display: flex; gap: 10px;">
@@ -610,6 +615,19 @@
                                 <div class="calculated-votes" id="islamicVotes">Votes: 0</div>
                             </div>
                             
+                            <div class="party-input-group">
+                                <div class="party-header">
+                                    <div class="party-color" style="background-color: #6f42c1;"></div>
+                                    Jatio Party
+                                </div>
+                                <div class="input-row">
+                                    <span class="input-label" id="jatioLabel">Percentage:</span>
+                                    <input type="number" class="input-field" id="jatioInput" placeholder="0" min="0" max="100" onchange="updateConstituencyData()">
+                                    <span style="font-size: 12px;">%</span>
+                                </div>
+                                <div class="calculated-votes" id="jatioVotes">Votes: 0</div>
+                            </div>
+                            
                             <div id="percentageValidation" style="display: none;">
                                 <div style="background: #f8f9fa; padding: 12px; border-radius: 6px; margin-top: 15px; border-left: 4px solid #007bff;">
                                     <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
@@ -673,6 +691,12 @@
                                 <td id="totalVotesIslamic">0</td>
                                 <td id="totalPercentIslamic">0%</td>
                             </tr>
+                            <tr>
+                                <td><div class="party-color" style="background-color: #6f42c1; display: inline-block; width: 15px; height: 15px; margin-right: 5px;"></div>Jatio</td>
+                                <td id="totalSeatsJatio">0</td>
+                                <td id="totalVotesJatio">0</td>
+                                <td id="totalPercentJatio">0%</td>
+                            </tr>
                             <tr class="total-row">
                                 <td><strong>Total</strong></td>
                                 <td id="grandTotalSeats"><strong>0</strong></td>
@@ -718,7 +742,8 @@
             'BNP': '#007bff',
             'Jamaat': '#28a745',
             'NCP': '#dc3545',
-            'Islamic': '#ffc107'
+            'Islamic': '#ffc107',
+            'Jatio': '#6f42c1'
         };
 
         // Generate random total voters between 400,000 and 500,000
@@ -932,7 +957,8 @@
                 'BNP': data.bnpVotes || 0,
                 'Jamaat': data.jamaatVotes || 0,
                 'NCP': data.ncpVotes || 0,
-                'Islamic': data.islamicVotes || 0
+                'Islamic': data.islamicVotes || 0,
+                'Jatio': data.jatioVotes || 0
             };
             
             return Object.keys(votes).reduce((a, b) => votes[a] > votes[b] ? a : b);
@@ -976,11 +1002,13 @@
                 document.getElementById('jamaatInput').value = data.jamaatPercent || '';
                 document.getElementById('ncpInput').value = data.ncpPercent || '';
                 document.getElementById('islamicInput').value = data.islamicPercent || '';
+                document.getElementById('jatioInput').value = data.jatioPercent || '';
             } else {
                 document.getElementById('bnpInput').value = data.bnpVotes || '';
                 document.getElementById('jamaatInput').value = data.jamaatVotes || '';
                 document.getElementById('ncpInput').value = data.ncpVotes || '';
                 document.getElementById('islamicInput').value = data.islamicVotes || '';
+                document.getElementById('jatioInput').value = data.jatioVotes || '';
             }
         }
 
@@ -1008,10 +1036,11 @@
             
             // Set dummy data for calculations (equal split with winner having slight edge)
             const totalVoters = constituencyFeature.properties.total_voters;
-            data.bnpVotes = selectedParty === 'BNP' ? Math.round(totalVoters * 0.4) : Math.round(totalVoters * 0.2);
-            data.jamaatVotes = selectedParty === 'Jamaat' ? Math.round(totalVoters * 0.4) : Math.round(totalVoters * 0.2);
-            data.ncpVotes = selectedParty === 'NCP' ? Math.round(totalVoters * 0.4) : Math.round(totalVoters * 0.2);
-            data.islamicVotes = selectedParty === 'Islamic' ? Math.round(totalVoters * 0.4) : Math.round(totalVoters * 0.2);
+            data.bnpVotes = selectedParty === 'BNP' ? Math.round(totalVoters * 0.4) : Math.round(totalVoters * 0.15);
+            data.jamaatVotes = selectedParty === 'Jamaat' ? Math.round(totalVoters * 0.4) : Math.round(totalVoters * 0.15);
+            data.ncpVotes = selectedParty === 'NCP' ? Math.round(totalVoters * 0.4) : Math.round(totalVoters * 0.15);
+            data.islamicVotes = selectedParty === 'Islamic' ? Math.round(totalVoters * 0.4) : Math.round(totalVoters * 0.15);
+            data.jatioVotes = selectedParty === 'Jatio' ? Math.round(totalVoters * 0.4) : Math.round(totalVoters * 0.15);
             
             // Update map colors
             if (polygonLayers[constituencyId]) {
@@ -1065,6 +1094,22 @@
             }
         }
 
+        // New function to handle party selection with proper event handling
+        function selectParty(partyValue) {
+            // Clear all radio buttons first
+            const radioButtons = document.querySelectorAll('input[name="winnerParty"]');
+            radioButtons.forEach(radio => {
+                radio.checked = false;
+            });
+            
+            // Set the selected party
+            const selectedRadio = document.querySelector(`input[name="winnerParty"][value="${partyValue}"]`);
+            if (selectedRadio) {
+                selectedRadio.checked = true;
+                showBriefNotification(`${partyValue} selected. Now click constituencies to assign this party.`);
+            }
+        }
+
         function clearWinnerSelection() {
             const radioButtons = document.querySelectorAll('input[name="winnerParty"]');
             radioButtons.forEach(radio => {
@@ -1086,6 +1131,7 @@
                         data.jamaatVotes = 0;
                         data.ncpVotes = 0;
                         data.islamicVotes = 0;
+                        data.jatioVotes = 0;
                     }
                 });
                 
@@ -1120,9 +1166,10 @@
                 const jamaatPercent = parseFloat(document.getElementById('jamaatInput').value) || 0;
                 const ncpPercent = parseFloat(document.getElementById('ncpInput').value) || 0;
                 const islamicPercent = parseFloat(document.getElementById('islamicInput').value) || 0;
+                const jatioPercent = parseFloat(document.getElementById('jatioInput').value) || 0;
                 
                 // Calculate total percentage
-                const totalPercent = bnpPercent + jamaatPercent + ncpPercent + islamicPercent;
+                const totalPercent = bnpPercent + jamaatPercent + ncpPercent + islamicPercent + jatioPercent;
                 const remainingPercent = 100 - totalPercent;
                 
                 // Show percentage validation section
@@ -1149,17 +1196,20 @@
                     data.jamaatPercent = jamaatPercent;
                     data.ncpPercent = ncpPercent;
                     data.islamicPercent = islamicPercent;
+                    data.jatioPercent = jatioPercent;
                     
                     data.bnpVotes = Math.round(totalVoters * bnpPercent / 100);
                     data.jamaatVotes = Math.round(totalVoters * jamaatPercent / 100);
                     data.ncpVotes = Math.round(totalVoters * ncpPercent / 100);
                     data.islamicVotes = Math.round(totalVoters * islamicPercent / 100);
+                    data.jatioVotes = Math.round(totalVoters * jatioPercent / 100);
                 }
                 
                 document.getElementById('bnpVotes').textContent = `Votes: ${(data.bnpVotes || 0).toLocaleString()}`;
                 document.getElementById('jamaatVotes').textContent = `Votes: ${(data.jamaatVotes || 0).toLocaleString()}`;
                 document.getElementById('ncpVotes').textContent = `Votes: ${(data.ncpVotes || 0).toLocaleString()}`;
                 document.getElementById('islamicVotes').textContent = `Votes: ${(data.islamicVotes || 0).toLocaleString()}`;
+                document.getElementById('jatioVotes').textContent = `Votes: ${(data.jatioVotes || 0).toLocaleString()}`;
                 
             } else {
                 // Hide percentage validation in count mode
@@ -1169,28 +1219,32 @@
                 const jamaatVotes = parseInt(document.getElementById('jamaatInput').value) || 0;
                 const ncpVotes = parseInt(document.getElementById('ncpInput').value) || 0;
                 const islamicVotes = parseInt(document.getElementById('islamicInput').value) || 0;
+                const jatioVotes = parseInt(document.getElementById('jatioInput').value) || 0;
                 
                 data.bnpVotes = bnpVotes;
                 data.jamaatVotes = jamaatVotes;
                 data.ncpVotes = ncpVotes;
                 data.islamicVotes = islamicVotes;
+                data.jatioVotes = jatioVotes;
                 
                 data.bnpPercent = totalVoters > 0 ? (bnpVotes / totalVoters * 100).toFixed(2) : 0;
                 data.jamaatPercent = totalVoters > 0 ? (jamaatVotes / totalVoters * 100).toFixed(2) : 0;
                 data.ncpPercent = totalVoters > 0 ? (ncpVotes / totalVoters * 100).toFixed(2) : 0;
                 data.islamicPercent = totalVoters > 0 ? (islamicVotes / totalVoters * 100).toFixed(2) : 0;
+                data.jatioPercent = totalVoters > 0 ? (jatioVotes / totalVoters * 100).toFixed(2) : 0;
                 
                 document.getElementById('bnpVotes').textContent = `Percentage: ${data.bnpPercent}%`;
                 document.getElementById('jamaatVotes').textContent = `Percentage: ${data.jamaatPercent}%`;
                 document.getElementById('ncpVotes').textContent = `Percentage: ${data.ncpPercent}%`;
                 document.getElementById('islamicVotes').textContent = `Percentage: ${data.islamicPercent}%`;
+                document.getElementById('jatioVotes').textContent = `Percentage: ${data.jatioPercent}%`;
             }
             
             // Check if constituency is completed (only save if valid in percentage mode)
-            const isValidData = inputMode === 'count' || (inputMode === 'percentage' && (parseFloat(document.getElementById('bnpInput').value) || 0) + (parseFloat(document.getElementById('jamaatInput').value) || 0) + (parseFloat(document.getElementById('ncpInput').value) || 0) + (parseFloat(document.getElementById('islamicInput').value) || 0) <= 100);
+            const isValidData = inputMode === 'count' || (inputMode === 'percentage' && (parseFloat(document.getElementById('bnpInput').value) || 0) + (parseFloat(document.getElementById('jamaatInput').value) || 0) + (parseFloat(document.getElementById('ncpInput').value) || 0) + (parseFloat(document.getElementById('islamicInput').value) || 0) + (parseFloat(document.getElementById('jatioInput').value) || 0) <= 100);
             
             if (isValidData) {
-                data.completed = data.bnpVotes > 0 || data.jamaatVotes > 0 || data.ncpVotes > 0 || data.islamicVotes > 0;
+                data.completed = data.bnpVotes > 0 || data.jamaatVotes > 0 || data.ncpVotes > 0 || data.islamicVotes > 0 || data.jatioVotes > 0;
             }
             
             // Update map colors only if data is valid
@@ -1238,6 +1292,7 @@
                 document.getElementById('jamaatLabel').textContent = labels;
                 document.getElementById('ncpLabel').textContent = labels;
                 document.getElementById('islamicLabel').textContent = labels;
+                document.getElementById('jatioLabel').textContent = labels;
                 
                 // Show/hide percentage validation
                 if (mode === 'percentage') {
@@ -1247,7 +1302,7 @@
                 }
                 
                 // Update input constraints
-                const inputs = ['bnpInput', 'jamaatInput', 'ncpInput', 'islamicInput'];
+                const inputs = ['bnpInput', 'jamaatInput', 'ncpInput', 'islamicInput', 'jatioInput'];
                 inputs.forEach(id => {
                     const input = document.getElementById(id);
                     if (mode === 'percentage') {
@@ -1426,8 +1481,8 @@
 
         // Update national summary
         function updateNationalSummary() {
-            let totalSeats = { 'BNP': 0, 'Jamaat': 0, 'NCP': 0, 'Islamic': 0 };
-            let totalVotes = { 'BNP': 0, 'Jamaat': 0, 'NCP': 0, 'Islamic': 0 };
+            let totalSeats = { 'BNP': 0, 'Jamaat': 0, 'NCP': 0, 'Islamic': 0, 'Jatio': 0 };
+            let totalVotes = { 'BNP': 0, 'Jamaat': 0, 'NCP': 0, 'Islamic': 0, 'Jatio': 0 };
             let hasWinnerOnlyData = false;
             
             Object.keys(constituencyData).forEach(constituencyId => {
@@ -1449,6 +1504,7 @@
                         totalVotes.Jamaat += data.jamaatVotes || 0;
                         totalVotes.NCP += data.ncpVotes || 0;
                         totalVotes.Islamic += data.islamicVotes || 0;
+                        totalVotes.Jatio += data.jatioVotes || 0;
                     }
                 }
             });
@@ -1461,8 +1517,8 @@
                     <th>Seats Won</th>
                 `;
                 // Hide vote and percentage columns
-                const voteCells = ['totalVotesBNP', 'totalVotesJamaat', 'totalVotesNCP', 'totalVotesIslamic', 'grandTotalVotes'];
-                const percentCells = ['totalPercentBNP', 'totalPercentJamaat', 'totalPercentNCP', 'totalPercentIslamic', 'grandTotalPercent'];
+                const voteCells = ['totalVotesBNP', 'totalVotesJamaat', 'totalVotesNCP', 'totalVotesIslamic', 'totalVotesJatio', 'grandTotalVotes'];
+                const percentCells = ['totalPercentBNP', 'totalPercentJamaat', 'totalPercentNCP', 'totalPercentIslamic', 'totalPercentJatio', 'grandTotalPercent'];
                 
                 voteCells.forEach(id => {
                     const cell = document.getElementById(id);
@@ -1480,8 +1536,8 @@
                     <th>Vote %</th>
                 `;
                 // Show vote and percentage columns
-                const voteCells = ['totalVotesBNP', 'totalVotesJamaat', 'totalVotesNCP', 'totalVotesIslamic', 'grandTotalVotes'];
-                const percentCells = ['totalPercentBNP', 'totalPercentJamaat', 'totalPercentNCP', 'totalPercentIslamic', 'grandTotalPercent'];
+                const voteCells = ['totalVotesBNP', 'totalVotesJamaat', 'totalVotesNCP', 'totalVotesIslamic', 'totalVotesJatio', 'grandTotalVotes'];
+                const percentCells = ['totalPercentBNP', 'totalPercentJamaat', 'totalPercentNCP', 'totalPercentIslamic', 'totalPercentJatio', 'grandTotalPercent'];
                 
                 voteCells.forEach(id => {
                     const cell = document.getElementById(id);
@@ -1501,6 +1557,7 @@
             document.getElementById('totalSeatsJamaat').textContent = totalSeats.Jamaat;
             document.getElementById('totalSeatsNCP').textContent = totalSeats.NCP;
             document.getElementById('totalSeatsIslamic').textContent = totalSeats.Islamic;
+            document.getElementById('totalSeatsJatio').textContent = totalSeats.Jatio;
             document.getElementById('grandTotalSeats').innerHTML = `<strong>${grandTotalSeats}</strong>`;
             
             if (!hasWinnerOnlyData) {
@@ -1509,6 +1566,7 @@
                 document.getElementById('totalVotesJamaat').textContent = totalVotes.Jamaat.toLocaleString();
                 document.getElementById('totalVotesNCP').textContent = totalVotes.NCP.toLocaleString();
                 document.getElementById('totalVotesIslamic').textContent = totalVotes.Islamic.toLocaleString();
+                document.getElementById('totalVotesJatio').textContent = totalVotes.Jatio.toLocaleString();
                 document.getElementById('grandTotalVotes').innerHTML = `<strong>${grandTotalVotes.toLocaleString()}</strong>`;
                 
                 // Update percentages
@@ -1516,11 +1574,13 @@
                 const jamaatPercent = grandTotalVotes > 0 ? ((totalVotes.Jamaat / grandTotalVotes) * 100).toFixed(1) : 0;
                 const ncpPercent = grandTotalVotes > 0 ? ((totalVotes.NCP / grandTotalVotes) * 100).toFixed(1) : 0;
                 const islamicPercent = grandTotalVotes > 0 ? ((totalVotes.Islamic / grandTotalVotes) * 100).toFixed(1) : 0;
+                const jatioPercent = grandTotalVotes > 0 ? ((totalVotes.Jatio / grandTotalVotes) * 100).toFixed(1) : 0;
                 
                 document.getElementById('totalPercentBNP').textContent = `${bnpPercent}%`;
                 document.getElementById('totalPercentJamaat').textContent = `${jamaatPercent}%`;
                 document.getElementById('totalPercentNCP').textContent = `${ncpPercent}%`;
                 document.getElementById('totalPercentIslamic').textContent = `${islamicPercent}%`;
+                document.getElementById('totalPercentJatio').textContent = `${jatioPercent}%`;
                 document.getElementById('grandTotalPercent').innerHTML = `<strong>100%</strong>`;
             }
         }
@@ -1721,7 +1781,7 @@
 
         function drawSummaryOnCanvas(ctx, centerX, startY) {
             // Calculate current totals
-            let totalSeats = { 'BNP': 0, 'Jamaat': 0, 'NCP': 0, 'Islamic': 0 };
+            let totalSeats = { 'BNP': 0, 'Jamaat': 0, 'NCP': 0, 'Islamic': 0, 'Jatio': 0 };
             Object.keys(constituencyData).forEach(constituencyId => {
                 const data = constituencyData[constituencyId];
                 if (data && data.completed) {
@@ -1734,7 +1794,8 @@
                 { name: 'BNP', color: '#007bff', seats: totalSeats.BNP },
                 { name: 'Jamaat', color: '#28a745', seats: totalSeats.Jamaat },
                 { name: 'NCP', color: '#dc3545', seats: totalSeats.NCP },
-                { name: 'Islamic', color: '#ffc107', seats: totalSeats.Islamic }
+                { name: 'Islamic', color: '#ffc107', seats: totalSeats.Islamic },
+                { name: 'Jatio', color: '#6f42c1', seats: totalSeats.Jatio }
             ];
             
             const grandTotal = Object.values(totalSeats).reduce((a, b) => a + b, 0);
@@ -1801,7 +1862,7 @@
             let csvContent = "data:text/csv;charset=utf-8,";
             
             // Headers
-            csvContent += "Constituency,Division,District,Total_Voters,Input_Mode,BNP_Votes,BNP_Percent,Jamaat_Votes,Jamaat_Percent,NCP_Votes,NCP_Percent,Islamic_Votes,Islamic_Percent,Winner\n";
+            csvContent += "Constituency,Division,District,Total_Voters,Input_Mode,BNP_Votes,BNP_Percent,Jamaat_Votes,Jamaat_Percent,NCP_Votes,NCP_Percent,Islamic_Votes,Islamic_Percent,Jatio_Votes,Jatio_Percent,Winner\n";
             
             // Data rows
             bangladeshData.features.forEach(constituency => {
@@ -1811,10 +1872,10 @@
                     const winner = getWinningParty(data);
                     const inputModeText = data.winnerOnly ? 'Winner Only' : 'Detailed';
                     
-                    csvContent += `"${constituency.properties.name || constituency.properties.constituency}","${constituency.properties.division}","${constituency.properties.district}",${constituency.properties.total_voters},"${inputModeText}",${data.bnpVotes || 0},${data.bnpPercent || 0},${data.jamaatVotes || 0},${data.jamaatPercent || 0},${data.ncpVotes || 0},${data.ncpPercent || 0},${data.islamicVotes || 0},${data.islamicPercent || 0},"${winner}"\n`;
+                    csvContent += `"${constituency.properties.name || constituency.properties.constituency}","${constituency.properties.division}","${constituency.properties.district}",${constituency.properties.total_voters},"${inputModeText}",${data.bnpVotes || 0},${data.bnpPercent || 0},${data.jamaatVotes || 0},${data.jamaatPercent || 0},${data.ncpVotes || 0},${data.ncpPercent || 0},${data.islamicVotes || 0},${data.islamicPercent || 0},${data.jatioVotes || 0},${data.jatioPercent || 0},"${winner}"\n`;
                 } else {
                     // Include incomplete constituencies with zero values
-                    csvContent += `"${constituency.properties.name || constituency.properties.constituency}","${constituency.properties.division}","${constituency.properties.district}",${constituency.properties.total_voters},"Not Predicted",0,0,0,0,0,0,0,0,"Not Predicted"\n`;
+                    csvContent += `"${constituency.properties.name || constituency.properties.constituency}","${constituency.properties.division}","${constituency.properties.district}",${constituency.properties.total_voters},"Not Predicted",0,0,0,0,0,0,0,0,0,0,"Not Predicted"\n`;
                 }
             });
             
